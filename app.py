@@ -1,4 +1,3 @@
-# -*- coding:utf-8 -*-
 import sys
 import time
 import threading
@@ -6,9 +5,12 @@ import glob
 import serial
 import serial.tools.list_ports
 
-from Modules.ajustAPI import ajustLogin, ajustLogUpdate
-from Modules.serialPort import ReaderThread, Protocol
+
 from Modules.ajustPort import get_ajust_serial_ports, AJUST_BAUDRATE
+from Modules.serialPort import ReaderThread, Protocol
+from Modules.ajustAPI import ajustLogin, ajustLogUpdate
+
+print(serial.__file__)
 
 
 def ajust_parsing_data(data):
@@ -27,7 +29,7 @@ def ajust_parsing_data(data):
         "device_Count": device_Count,
         "group": device_Group,
     }
-    
+
     res = ajustLogUpdate(logData)
 
 
@@ -52,7 +54,7 @@ class rawProtocal(Protocol):
 def serialThreadInit():
     PORT = get_ajust_serial_ports()
 
-    serialInstance = serial.serial_for_url(
+    serialInstance = serial.Serial(
         PORT, baudrate=AJUST_BAUDRATE, timeout=5)
     with ReaderThread(serialInstance, rawProtocal) as p:
         while p.isDone():
@@ -69,4 +71,5 @@ def main():
     serialThreadInit()
 
 
-main()
+if __name__ == '__main__':
+    main()
